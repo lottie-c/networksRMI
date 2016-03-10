@@ -34,14 +34,27 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		}
 		
 		// TO-DO: Log receipt of the message
+		receivedMessages[totalMessages] = msg.messageNum;
 		totalMessages += 1;
-		
-		
+		System.out.println("Message:" + msg.messageNum + " received");
 		
 	
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
-		if()
+		if(msg.messageNum == totalMessages){
+			int i = 0, j=1;
+			
+			while( i < totalMessages){
+				if (receivedMessages[i] != j ){
+					while(j < receivedMessages[i]){
+						System.out.println("Message: " + j + " is missing");
+						j++;
+					}
+				}
+				j++;
+				i++;
+			}
+		}
 
 	}
 
@@ -51,11 +64,25 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		RMIServer rmis = null;
 
 		// TO-DO: Initialise Security Manager
-
+		if (System.getSecurityManager() == null){
+			//does this need to be RMIsecurityManager
+			System.setSecurityManager(new SecurityManager());
+		}
 		// TO-DO: Instantiate the server class
-
+		
 		// TO-DO: Bind to RMI registry
-
+		try {
+			RMIServer server = new RMIServer();
+			Naming.rebind("rmi://localhost/RMIserver", server);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			System.out.print("Trouble " + e);
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			System.out.print("Trouble " + e);
+			e.printStackTrace();
+		}
 	}
 
 	protected static void rebindServer(String serverURL, RMIServer server) {
