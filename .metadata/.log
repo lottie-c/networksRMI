@@ -1,0 +1,53 @@
+!SESSION 2016-03-06 16:55:45.140 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.7.0_79
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.vectrace.MercurialEclipse 2 0 2016-03-06 16:56:13.875
+!MESSAGE Batch size for status command not correct.
+
+!ENTRY org.eclipse.mylyn.tasks.core 1 0 2016-03-06 16:56:13.925
+!MESSAGE Migrating task repository credentials from keyring.
+
+!ENTRY com.vectrace.MercurialEclipse 1 0 2016-03-06 16:56:14.532
+!MESSAGE checking encoding (ascii)...
+checking Python lib (/usr/lib/python2.7)...
+checking installed modules (/usr/lib/python2.7/dist-packages/mercurial)...
+checking templates (/usr/share/mercurial/templates)...
+checking commit editor...
+checking username...
+no username found, using 'cmc115@ray30.doc.ic.ac.uk' instead
+no problems detected
+
+!ENTRY org.eclipse.ui 2 2 2016-03-06 16:58:20.278
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+!SESSION 2016-03-06 16:58:29.225 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.7.0_79
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.vectrace.MercurialEclipse 1 0 2016-03-06 16:58:40.641
+!MESSAGE checking encoding (ascii)...
+checking Python lib (/usr/lib/python2.7)...
+checking installed modules (/usr/lib/python2.7/dist-packages/mercurial)...
+checking templates (/usr/share/mercurial/templates)...
+checking commit editor...
+checking username...
+no username found, using 'cmc115@ray30.doc.ic.ac.uk' instead
+no problems detected
+
+!ENTRY org.eclipse.ui 2 2 2016-03-06 16:58:42.142
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+!SESSION 2016-03-10 14:04:30.993 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.7.0_79
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.ui 2 2 2016-03-10 14:06:18.838
+!MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
