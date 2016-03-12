@@ -6,6 +6,7 @@ package rmi;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
@@ -67,7 +68,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// TO-DO: Initialise Security Manager
 		if (System.getSecurityManager() == null){
 			//does this need to be RMIsecurityManager
-			System.setSecurityManager(new SecurityManager());
+			System.setSecurityManager(new RMISecurityManager());
 		}
 		System.out.println("Security Manager initialised.");
 		// TO-DO: Instantiate the server class
@@ -95,20 +96,25 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		Registry r;
 		try {
 			//should be createRegistry(//portnumber?)
-			r = LocateRegistry.getRegistry(2001);
-			r.rebind(serverURL, server);
+			//r = LocateRegistry.getRegistry(3000);
+			Naming.rebind(serverURL, server);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			System.out.println("No registry to get.");
 			try {
-				r = LocateRegistry.createRegistry(2001);
+				r = LocateRegistry.createRegistry(3000);
+				System.out.println("registry created.");
 				r.rebind(serverURL, server);
+				System.out.println("registry bound.");
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				System.out.println("can't create registry " + e1);
 				e.printStackTrace();
 				}
-			}
+			} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		}
 		
 		

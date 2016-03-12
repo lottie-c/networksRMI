@@ -7,13 +7,14 @@ package rmi;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 import common.MessageInfo;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 /**
  * @author bandara
  *
@@ -36,12 +37,14 @@ public class RMIClient {
 		// TO-DO: Initialise Security Manager
 		
 		if (System.getSecurityManager() == null){
-			System.setSecurityManager(new SecurityManager());
+			System.setSecurityManager(new RMISecurityManager());
 			try {
-				Registry r = LocateRegistry.getRegistry(args[0]);
 				// TO-DO: Bind to RMIServer
-				RMIServer server = (RMIServer)r.lookup(urlServer);
 				
+				//Registry r = LocateRegistry.getRegistry(args[0]);
+				//System.out.println("found registry");
+				RMIServer server = (RMIServer)Naming.lookup(urlServer);
+				System.out.println("looked up ");
 				// TO-DO: Attempt to send messages the specified number of times
 				for (int i =1; i <= numMessages; i++){
 					MessageInfo msg = new MessageInfo(numMessages, i);
@@ -49,13 +52,16 @@ public class RMIClient {
 				}
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
-				System.out.print("An exception occurred during the " +
+				System.out.println("An exception occurred during the " +
 						"execution of the remote procedure call to receiveMessage()");
 				e.printStackTrace();
 			} catch (NotBoundException e) {
 				// TODO Auto-generated catch block
-				System.out.print("Tried to look up a registry that has no" +
+				System.out.println("Tried to look up a registry that has no" +
 						" associated binding");
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
