@@ -25,6 +25,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 	private int[] receivedMessages;
 
 	public RMIServer() throws RemoteException {
+		super();
 	}
 
 	public void receiveMessage(MessageInfo msg) throws RemoteException {
@@ -62,66 +63,40 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 
 	public static void main(String[] args) {
-
 		RMIServer rmis = null;
-
-		// TO-DO: Initialise Security Manager
-		if (System.getSecurityManager() == null){
-			//does this need to be RMIsecurityManager
-			System.setSecurityManager(new RMISecurityManager());
-		}
-		System.out.println("Security Manager initialised.");
-		// TO-DO: Instantiate the server class
-		
-		// TO-DO: Bind to RMI registry
-		try {
-			rmis = new RMIServer();
-			System.out.println("New server instantiated.");
-							//what does this  URL need to be?
-			RMIServer.rebindServer("RMIServer", rmis);
-			System.out.println("Server Bound to RMI registry.");
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			System.out.print("Trouble " + e);
-			e.printStackTrace();
-		}
-		
+		 
+		if (System.getSecurityManager() == null) {
+	            System.setSecurityManager(new SecurityManager());
+	        }
+		try{
+			String name = "RMIServerI";
+			RMIServerI server = new RMIServer();
+	        /*RMIServerI stub =
+	            (RMIServerI) UnicastRemoteObject.exportObject(server, 0);*/
+	        Registry registry = LocateRegistry.createRegistry(2000);
+	        registry.rebind(name, server);
+	        System.out.println("RMIServerI bound");
+	    }catch (Exception e) {
+	        System.err.println("RMIServerI exception:");
+	        e.printStackTrace();
+	    }
 	}
 
 	protected static void rebindServer(String serverURL, RMIServer server) {
 
 		// TO-DO:
-		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
-		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
-		Registry r;
-		try {
-			//should be createRegistry(//portnumber?)
-			//r = LocateRegistry.getRegistry(3000);
-			Naming.rebind(serverURL, server);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			System.out.println("No registry to get.");
-			try {
-				r = LocateRegistry.createRegistry(3000);
-				System.out.println("registry created.");
-				r.rebind(serverURL, server);
-				System.out.println("registry bound.");
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				System.out.println("can't create registry " + e1);
-				e.printStackTrace();
-				}
-			} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		}
+				// Start / find the registry (hint use LocateRegistry.createRegistry(...)
+				// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
+
+				// TO-DO:
+				// Now rebind the server to the registry (rebind replaces any existing servers bound to the serverURL)
+				// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
+				// expects different things from the URL field.
 		
 		
-		// TO-DO:
-		// Now rebind the server to the registry (rebind replaces any existing servers bound to the serverURL)
-		// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
-		// expects different things from the URL field.
+	}
+		
+		
 		
 }
 
