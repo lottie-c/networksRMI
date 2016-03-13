@@ -26,38 +26,73 @@ public class UDPServer {
 
 	private void run() {
 		
-		int				pacSize;
-		byte[]			pacData;
-		DatagramPacket 	pac;
+		int				pacSize = 500;
+		byte[]			pacData = new byte[pacSize];
+		DatagramPacket 	pac = new DatagramPacket(pacData, pacSize);
 
 		
 		long startTime = System.currentTimeMillis();
-		while((System.currentTimeMillis() - startTime < 30000)){
+		while((System.currentTimeMillis() - startTime < 3000)){
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
-		 
-		pacData = new byte[500];
-		pac = new DatagramPacket(pacData,pacData.length);
-		try {
-			recvSoc.receive(pac);
-		} catch (IOException e) {
-			System.out.println("Failed to receive packet");
-			e.printStackTrace();
-		}
-		
-		//processMessage()
+			
+			
+			try {
+				recvSoc.receive(pac);
+				System.out.println("received a message");
+				String payload = new String(pac.getData(), 0, pac.getLength());
+				System.out.println("converted byte array to string: " + payload);
+				
+				processMessage(payload);
+				System.out.println("processed message");
+				
+			} catch (IOException e) {
+				System.out.println("Problem in recvSoc.receive().");
+				e.printStackTrace();
+			}
+
 		}
 	}
 
 	public void processMessage(String data) {
 
-		MessageInfo msg = null;
-
 		// TO-DO: Use the data to construct a new MessageInfo object
-
-		// TO-DO: On receipt of first message, initialise the receive buffer
-
-		// TO-DO: Log receipt of the message
+		try {
+			MessageInfo msg = new MessageInfo(data);
+			System.out.println("msg constructed");
+			
+			if (totalMessages == -1 ){
+				receivedMessages = new int[msg.totalMessages];
+				totalMessages = 0;
+			}
+			
+			// TO-DO: Log receipt of the message
+			receivedMessages[totalMessages] = msg.messageNum;
+			totalMessages += 1;
+			System.out.println("Message:" + (msg.messageNum + 1) +" received");
+			
+			if(msg.messageNum + 1  == msg.totalMessages){
+				System.out.println("in here yo");
+				int i = 0, j=1;
+				
+				while( i < totalMessages){
+					if (receivedMessages[i] != j ){
+						while(j < receivedMessages[i]){
+							System.out.println("Message: " + j+1 + " is missing");
+							j++;
+						}
+					}
+					j++;
+					i++;
+				}
+				System.out.println("summary over");
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Can't convert incoming data to MessageInfo");
+			e.printStackTrace();
+		}
+	
 
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
@@ -68,9 +103,8 @@ public class UDPServer {
 	public UDPServer(int rp) {
 		// TO-DO: Initialise UDP socket for receiving data
 		try {
-			DatagramSocket recvSoc = new DatagramSocket(rp);
+			recvSoc = new DatagramSocket(rp);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Problem initialising server side socket.");
 			e.printStackTrace();
 		}
@@ -88,10 +122,12 @@ public class UDPServer {
 			System.exit(-1);
 		}
 		recvPort = Integer.parseInt(args[0]);
+		
 
+		// TO-DO: Construct Server object and start it by calling run().
 		UDPServer server = new UDPServer(recvPort);
 		server.run();
-		// TO-DO: Construct Server object and start it by calling run().
+		
 	}
 
 }
