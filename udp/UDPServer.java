@@ -33,26 +33,27 @@ public class UDPServer {
 		DatagramPacket 	pac = new DatagramPacket(pacData, pacSize);
 
 		
-		long startTime = System.currentTimeMillis();
+		
 		while(close){
-			if(System.currentTimeMillis() - startTime > 3000){
-				close = false; 
-			}
+		long startTime = System.currentTimeMillis();
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
 			
 			
 			try {
+				recvSoc.setSoTimeout(30000);
 				recvSoc.receive(pac);
 				String payload = new String(pac.getData(), 0, pacSize).trim();
 				processMessage(payload);
-				
+				if(System.currentTimeMillis() - startTime > 30000){
+					close = false; 
+					
+				}
 				
 			} catch (IOException e) {
-				System.out.println("Problem in recvSoc.receive().");
-				e.printStackTrace();
+				System.out.println("receive timed out.");
+				return;
 			}
-
 		}
 	}
 
@@ -71,30 +72,6 @@ public class UDPServer {
 			// TO-DO: Log receipt of the message
 			receivedMessages[totalMessages] = msg.messageNum;
 			totalMessages += 1;
-			
-			if(msg.messageNum + 1  == msg.totalMessages){
-
-				int i = 0, j=1;
-				
-				while( i < totalMessages){
-					if (receivedMessages[i] != j ){
-						while(j < receivedMessages[i]){
-							System.out.println("Message: " + j+1 + " is missing");
-							lostMessages[totalLostMessages] = j+1;
-							totalLostMessages++;
-							j++;
-						}
-					}
-					j++;
-					i++;
-				}
-				
-				System.out.println("Messages sent: " + totalMessages);
-				System.out.println("Messages received: " + totalMessages);
-				if(totalLostMessages > 0){
-				System.out.println("Missing Messages are: " + lostMessages.toString());
-				}
-			}
 			
 		} catch (Exception e) {
 			System.out.println("Can't convert incoming data to MessageInfo");
@@ -121,6 +98,30 @@ public class UDPServer {
 	}
 
 	
+	public void summary(){
+		int i = 0, j=1;
+		
+		while( i < totalMessages){
+			if (receivedMessages[i] != j ){
+				while(j < receivedMessages[i]){
+					System.out.println("Message: " + j+1 + " is missing");
+					lostMessages[totalLostMessages] = j+1;
+					totalLostMessages++;
+					j++;
+				}
+			}
+			j++;
+			i++;
+		}
+		
+		System.out.println("Messages sent: " + totalMessages);
+		System.out.println("Messages received: " + totalMessages);
+		if(totalLostMessages > 0){
+		System.out.println("Missing Messages are: " + lostMessages.toString());
+		}
+	}
+
+	
 	public static void main(String args[]) {
 		int	recvPort;
 
@@ -135,6 +136,8 @@ public class UDPServer {
 		// TO-DO: Construct Server object and start it by calling run().
 		UDPServer server = new UDPServer(recvPort);
 		server.run();
+		server.summary();
+		return;
 		
 	}
 

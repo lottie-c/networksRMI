@@ -65,7 +65,6 @@ public class UDPClient {
 			MessageInfo msg = new MessageInfo(countTo, i);
 			payload = msg.toString();
 			this.send(payload ,serverAddr, recvPort);
-			System.out.println("message " + i + " sent");
 			if(i == countTo - 1){
 				System.out.println("All messages sent");
 			}
