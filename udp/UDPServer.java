@@ -22,8 +22,10 @@ public class UDPServer {
 	private DatagramSocket recvSoc;
 	private int totalMessages = -1;
 	private int[] receivedMessages;
-	private boolean close;
-
+	private boolean close = true;
+	int [] lostMessages;
+	int totalLostMessages = 0;
+	
 	private void run() {
 		
 		int				pacSize = 500;
@@ -32,19 +34,19 @@ public class UDPServer {
 
 		
 		long startTime = System.currentTimeMillis();
-		while((System.currentTimeMillis() - startTime < 3000)){
+		while(close){
+			if(System.currentTimeMillis() - startTime > 3000){
+				close = false; 
+			}
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
 			
 			
 			try {
 				recvSoc.receive(pac);
-				System.out.println("received a message");
-				String payload = new String(pac.getData(), 0, pac.getLength());
-				System.out.println("converted byte array to string: " + payload);
-				
+				String payload = new String(pac.getData(), 0, pacSize).trim();
 				processMessage(payload);
-				System.out.println("processed message");
+				
 				
 			} catch (IOException e) {
 				System.out.println("Problem in recvSoc.receive().");
@@ -59,33 +61,39 @@ public class UDPServer {
 		// TO-DO: Use the data to construct a new MessageInfo object
 		try {
 			MessageInfo msg = new MessageInfo(data);
-			System.out.println("msg constructed");
 			
 			if (totalMessages == -1 ){
 				receivedMessages = new int[msg.totalMessages];
 				totalMessages = 0;
+				lostMessages = new int[msg.totalMessages];
 			}
 			
 			// TO-DO: Log receipt of the message
 			receivedMessages[totalMessages] = msg.messageNum;
 			totalMessages += 1;
-			System.out.println("Message:" + (msg.messageNum + 1) +" received");
 			
 			if(msg.messageNum + 1  == msg.totalMessages){
-				System.out.println("in here yo");
+
 				int i = 0, j=1;
 				
 				while( i < totalMessages){
 					if (receivedMessages[i] != j ){
 						while(j < receivedMessages[i]){
 							System.out.println("Message: " + j+1 + " is missing");
+							lostMessages[totalLostMessages] = j+1;
+							totalLostMessages++;
 							j++;
 						}
 					}
 					j++;
 					i++;
 				}
-				System.out.println("summary over");
+				
+				System.out.println("Messages sent: " + totalMessages);
+				System.out.println("Messages received: " + totalMessages);
+				if(totalLostMessages > 0){
+				System.out.println("Missing Messages are: " + lostMessages.toString());
+				}
 			}
 			
 		} catch (Exception e) {
