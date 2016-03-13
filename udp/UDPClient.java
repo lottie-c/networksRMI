@@ -48,6 +48,13 @@ public class UDPClient {
 
 	public UDPClient() {
 		// TO-DO: Initialise the UDP socket for sending data
+		try {
+			DatagramSocket sendSoc = new DatagramSocket();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Problem initialising client side socket.");
+			e.printStackTrace();
+		}
 	}
 
 	private void testLoop(InetAddress serverAddr, int recvPort, int countTo) {
