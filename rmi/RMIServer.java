@@ -24,7 +24,9 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 	private int totalMessages = -1;
 	private int[] receivedMessages;
-
+	private int[] lostMessages;
+	private int totalLostMessages =0;
+	private int totalSent = -1;
 	public RMIServer() throws RemoteException {
 		super();
 	}
@@ -33,33 +35,21 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		if (totalMessages == -1 ){
-			receivedMessages = new int[msg.totalMessages];
+			totalSent = msg.totalMessages;
+			receivedMessages = new int[totalSent];
 			totalMessages = 0;
+			lostMessages = new int[totalSent];
+			
 		}
 		
 		// TO-DO: Log receipt of the message
-		receivedMessages[totalMessages] = msg.messageNum;
+		receivedMessages[msg.messageNum] = 1;
 		totalMessages += 1;
-		System.out.println("Message:" + (msg.messageNum + 1) +" received");
-		
-	
+
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
 		if(msg.messageNum + 1  == msg.totalMessages){
-			System.out.println("in here yo");
-			int i = 0, j=1;
-			
-			while( i < totalMessages){
-				if (receivedMessages[i] != j ){
-					while(j < receivedMessages[i]){
-						System.out.println("Message: " + j+1 + " is missing");
-						j++;
-					}
-				}
-				j++;
-				i++;
-			}
-			System.out.println("summary over");
+			summary();
 		}
 
 	}
@@ -85,27 +75,34 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 	protected static void rebindServer(String name, RMIServerI server) {
 		
-		
         try {
         	Registry registry = LocateRegistry.createRegistry(2000);
 			registry.rebind(name, server);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Problem creating/binding to registry at port 2000");
 			e.printStackTrace();
-		}
-		// TO-DO:
-				// Start / find the registry (hint use LocateRegistry.createRegistry(...)
-				// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
-
-				// TO-DO:
-				// Now rebind the server to the registry (rebind replaces any existing servers bound to the serverURL)
-				// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
-				// expects different things from the URL field.
-		
-		
+		}	
 	}
 		
+	public void summary(){
+		int i = 0;
 		
+		while( i < totalSent){
+			if (receivedMessages[i] != 1 ){
+					lostMessages[totalLostMessages] = i;
+					totalLostMessages++;
+			}
+			i++;
+		}
+		
+		lostMessages = Arrays.copyOf(lostMessages, totalLostMessages);
+		
+		System.out.println("Messages sent: " + totalSent);
+		System.out.println("Messages received: " + totalMessages);
+		if(totalLostMessages > 0){
+		System.out.println("Missing Messages are: " + Arrays.toString(lostMessages));
+		}
+	}
 		
 }
 

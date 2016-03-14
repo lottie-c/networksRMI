@@ -70,7 +70,7 @@ public class UDPServer {
 			}
 			
 			// TO-DO: Log receipt of the message
-			receivedMessages[totalMessages] = msg.messageNum;
+			receivedMessages[totalMessages] = msg.messageNum+1;
 			totalMessages += 1;
 			
 		} catch (Exception e) {
@@ -104,8 +104,8 @@ public class UDPServer {
 		while( i < totalMessages){
 			if (receivedMessages[i] != j ){
 				while(j < receivedMessages[i]){
-					System.out.println("Message: " + j+1 + " is missing");
-					lostMessages[totalLostMessages] = j+1;
+					System.out.println("Message: " + (j) + " is missing");
+					lostMessages[totalLostMessages] = j;
 					totalLostMessages++;
 					j++;
 				}
@@ -114,10 +114,13 @@ public class UDPServer {
 			i++;
 		}
 		
+		lostMessages = Arrays.copyOf(lostMessages, totalLostMessages);
+		receivedMessages = Arrays.copyOf(receivedMessages, totalMessages);
 		System.out.println("Messages sent: " + totalMessages);
 		System.out.println("Messages received: " + totalMessages);
+		System.out.println("Received Messages are: " + Arrays.toString(receivedMessages));
 		if(totalLostMessages > 0){
-		System.out.println("Missing Messages are: " + lostMessages.toString());
+		System.out.println("Missing Messages are: " + Arrays.toString(lostMessages));
 		}
 	}
 

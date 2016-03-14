@@ -49,7 +49,7 @@ public class RMIClient {
 	            String name = "RMIServerI";
 	            Registry registry = LocateRegistry.getRegistry(args[0],2000);
 	            RMIServerI server = (RMIServerI) registry.lookup(name);
-	            for (int i = 0; i < numMessages; i++){
+	            for (int i = 0; i < numMessages; i = i+2){
 	            	MessageInfo msg = new MessageInfo(numMessages, i);
 	            	server.receiveMessage(msg);
 	            }
